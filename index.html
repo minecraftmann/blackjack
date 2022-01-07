@@ -1,0 +1,40 @@
+<p id="cards"></p>
+<p id="value"></p>
+<button type="button" onclick="makereq('draw')" id="draw">Draw a card</button>
+<button type="button" onclick="makereq('newhand')" id="newhand">Draw a new hand</button>
+<a href="https://sambackgammon.auth.us-east-1.amazoncognito.com/login?client_id=69n4cb8p1fuj868jens388q8mp&response_type=token&scope=openid&redirect_uri=http%3A%2F%2Flocalhost"> Login </a>
+<a href="https://sambackgammon.auth.us-east-1.amazoncognito.com/logout?client_id=69n4cb8p1fuj868jens388q8mp&response_type=token&scope=openid&redirect_uri=http%3A%2F%2Flocalhost"> Logout </a>
+
+<script>
+
+  hash = window.location.hash.substr(1).split('&');
+  data = {};
+  for (x in hash){
+    line = hash[x].split('=');
+    data[line[0]] = line[1]
+  }
+  token = 'Bearer ' + data['id_token']
+
+  function makereq(command){
+    url = "https://57l43kevn8.execute-api.us-east-1.amazonaws.com/Prod/draw?command=" + command
+    fetch(url, {
+      method: 'GET',
+      headers: new Headers({
+        'Authorization': token
+      })
+    })
+    .then(response => response.json())
+    .then(resdata => {
+      document.getElementById("cards").innerHTML = resdata.message
+      document.getElementById("value").innerHTML = resdata.value
+      if(parseInt(resdata.value)>21){
+        alert("BUST!!!")
+      }else if(parseInt(resdata.value)==21){
+        alert("21!!!")
+      }
+    });
+  }
+
+  makereq("gethand")
+
+</script>

@@ -1,3 +1,14 @@
 AWS SERVERLESS BLACKJACK
 
 APIGATEWAY, COGNITO, LAMBDA, DYNAMODB, CLOUDFORMATION
+
+Some COORS configuration was done manually on the console.
+
+
+Currently allows access origin * since were using localhost for dev purposes.
+To test, put the index.html file on a web server listening on localhost on port 80
+
+
+For next time:
+- The Cognito setup can be decoupled from the API and have its own CloudFormation template
+- Set up a wildcard OPTIONS function for CORS instead of one per request
