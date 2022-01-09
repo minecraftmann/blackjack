@@ -51,8 +51,16 @@ def lambda_handler(event, context):
         for card in cards:
             deck.append("_".join([suit,card]))
 
+    if event["queryStringParameters"] is not None and event["queryStringParameters"]["command"]=="unittest":
+        totest = ["heart_k,heart_a", "heart_k,heart_a,heart_q", "heart_9,heart_a,club_a"]
+        results = [evalhand(x) for x in totest]
+        hand = json.dumps({
+            'input': totest, 
+            'output': results,
+        })
+
     # if user wants a new hand
-    if event["queryStringParameters"] is not None and event["queryStringParameters"]["command"]=="newhand":
+    elif event["queryStringParameters"] is not None and event["queryStringParameters"]["command"]=="newhand":
         hand = newhand(deck)
 
     # if user wants to see their hand or draw a new card then load the current deck from the db
@@ -68,7 +76,7 @@ def lambda_handler(event, context):
         hand = response["Item"]["hand"]["S"]
 
         # if the user wanted to draw a card, draw them a card
-        if event["queryStringParameters"] is None or event["queryStringParameters"]["command"]!="gethand":
+        if (event["queryStringParameters"] is None or event["queryStringParameters"]["command"]!="gethand") and evalhand(hand)<21:
             hand = draw(hand, deck)
     
     # if the user made a change to their deck, update the database
@@ -85,13 +93,16 @@ def lambda_handler(event, context):
             }
         )
 
+    handval =0
+    if event["queryStringParameters"] is None or event["queryStringParameters"]["command"]!="unittest":
+        handval = evalhand(hand)
 
     return {
         "statusCode": 200,
         "body": json.dumps(
             {
                 "message": hand,
-                "value": evalhand(hand)
+                "value": handval
             }
         ),
         "headers": {
