@@ -13,3 +13,4 @@ For next time:
 - The Cognito setup can be decoupled from the API and have its own CloudFormation template
 - Set up a wildcard OPTIONS function for CORS instead of one per request
 - Remember to make more regular commits
+- Design for use with Auth code flow vs Implicit flow
